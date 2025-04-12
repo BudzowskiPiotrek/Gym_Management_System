@@ -6,7 +6,8 @@ from tkinter import Tk, messagebox, ttk
 class Main:
     # NO AUTO FORMATEAR PORFAVOR QUE SINO SE HACE POCO LEIBLE.
     # *** FALTA EN REGISTRO BOTON DE RADIO PARA PARTICUALRES O PROFESIONALES ***
-    # *** DATOS DE REGISTARR GUARDAR RESULTADO EN BASE DE DATOS ***
+    # *** DATOS DE REGISTARR GUARDAR EN LA BASE DE DATOS ***
+    
     
     
     # ES UN PRE DISEÑO ESTA PARTE PODEMOS CAMBIAR A NUESTRO AGRADO, POR AHORA CREE ALGO MUY SIMPLE PARA IR PRACTICANDO ES LA PANTALLA DE LOGIN.
@@ -77,7 +78,7 @@ class Main:
         self.entry_correo_registro.pack(pady=(0, 15))
 
         # Botones
-        self.boton_registrar_confirmar = ttk.Button(self.frame_registro, text="Confirmar Registro",)
+        self.boton_registrar_confirmar = ttk.Button(self.frame_registro, text="Confirmar Registro", command=self.registrar_usuario)
         self.boton_registrar_confirmar.pack(pady=10)
         
         self.boton_volver = ttk.Button(self.frame_registro, text="Volver Atrás", command=self.volver_atras)     # SI PULSAS ESTE BOTON ARRANCA DEF (METODO) DE VOLVER ATRAS
@@ -85,6 +86,12 @@ class Main:
         
     
     
+    # AQUI HAY TRABAJO OJU xD
+    def registrar_usuario(self):()
+      
+        
+    
+    # ESTA BIEN EXPLICADO DENTRO PAPITO.
     def volver_atras(self):
         # OCULTAMOS LO DE REGISTRAR
         self.frame_registro.place_forget()
@@ -142,8 +149,8 @@ class Main:
 
             if resultado:
                 messagebox.showinfo("Conexión Exitosa", "¡Conectado con éxito!")
-            # *** AQUI CARGAMOS EL DEF ( METODO ) QUE CARGA INTERFACE DE USUARIO, SI SERIA DE TIPO USUARIO, OPCIONES USUARIO,
-            # SI ADMINSITRADOR, OPCIONES ADMINISTRADOR, SI ENTRENADOR PUES ENTRENADOR
+            # *** AQUI CARGAMOS EL DEF ( METODO ) QUE CARGA INTERFACE CUENTA, SI SERIA DE TIPO USUARIO OPCIONES USUARIO,
+            # SI ADMINSITRADOR OPCIONES ADMINISTRADOR Y SI ENTRENADOR PUES ENTRENADOR
             else:
                 messagebox.showerror("Error", "Usuario o contraseña incorrectos.")
 
