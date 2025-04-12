@@ -11,7 +11,7 @@ class Usuario:
         nombre_usuario: str,
         contrasenia: str,
         correo: str,
-        tipo: TipoUsuario,
+        tipo: TipoUsuario
     ):
         self.id = id
         self.nombre_usuario = nombre_usuario
