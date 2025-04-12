@@ -78,7 +78,7 @@ class Main:
         self.entry_correo_registro.pack(pady=(0, 15))
 
         # Botones
-        self.boton_registrar_confirmar = ttk.Button(self.frame_registro, text="Confirmar Registro", command=self.registrar_usuario)
+        self.boton_registrar_confirmar = ttk.Button(self.frame_registro, text="Confirmar Registro", command=self.registrar_usuario)     # SI PULSAS ESTE BOTON ARRANCA DEF (METODO) DE REGISTRAR USUARIO
         self.boton_registrar_confirmar.pack(pady=10)
         
         self.boton_volver = ttk.Button(self.frame_registro, text="Volver Atrás", command=self.volver_atras)     # SI PULSAS ESTE BOTON ARRANCA DEF (METODO) DE VOLVER ATRAS
