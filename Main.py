@@ -1,10 +1,10 @@
 import mysql.connector
+import re
 from tkinter import Tk, messagebox, ttk
 
 
 class Main:
-if __name__ == "__main__":
-    Main()
+
     # ES UN PRE DISEÑO ESTA APRTE PODEMOS CAMBIAR A NUESTRO AGRADO, POR AHORA CREE ALGO MUY SIMPLE PARA IR PRACTICANDO ES LA PANTALLA DE LOGIN
     def __init__(self):
         self.ventana = Tk()
@@ -50,6 +50,20 @@ if __name__ == "__main__":
         # Obtener los valores ingresados por el usuario
         nombre_usuario = self.entry_usuario.get()
         contraseña = self.entry_contraseña.get()
+        
+         # Expresiones regulares para validar el nombre de usuario y la contraseña
+        patron_usuario = r'^[a-zA-Z0-9ñÑ]+$' 
+        patron_contraseña = r'^[a-zA-Z0-9ñÑ]+$'
+        
+         # Validar nombre de usuario
+        if not re.match(patron_usuario, nombre_usuario):
+            messagebox.showerror("Error", "El nombre de usuario puede tener solo letras y numeros y letra ñ")
+            return  # Salir de la función si no es válido
+
+        # Validar contraseña
+        if not re.match(patron_contraseña, contraseña):
+            messagebox.showerror("Error", "La contraseña de usuario puede tener solo letras y numeros y letra ñ")
+            return  # Salir de la función si no es válida
 
         # Conectar a la base de datos MySQL
         try:
@@ -92,4 +106,5 @@ if __name__ == "__main__":
 
 
 # Ejecutar la interfaz
-
+if __name__ == "__main__":
+    Main()
