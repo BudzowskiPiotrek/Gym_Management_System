@@ -3,7 +3,8 @@ from tkinter import Tk, messagebox, ttk
 
 
 class Main:
-
+if __name__ == "__main__":
+    Main()
     # ES UN PRE DISEÑO ESTA APRTE PODEMOS CAMBIAR A NUESTRO AGRADO, POR AHORA CREE ALGO MUY SIMPLE PARA IR PRACTICANDO ES LA PANTALLA DE LOGIN
     def __init__(self):
         self.ventana = Tk()
@@ -33,7 +34,7 @@ class Main:
 
         # Botones
         self.boton_entrar = ttk.Button(
-            frame, text="Entrar", command=self.verificar_usuario
+            frame, text="Entrar", command=self.verificar_usuario # SI PULSA ESTE BOTON ARRANCA DEF ( METODO ) DE VERIFICAR_USUARIO
         )
         self.boton_entrar.pack(pady=5)
 
@@ -91,5 +92,4 @@ class Main:
 
 
 # Ejecutar la interfaz
-if __name__ == "__main__":
-    Main()
+
