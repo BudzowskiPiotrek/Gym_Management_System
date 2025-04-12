@@ -5,8 +5,11 @@ from tkinter import Tk, messagebox, ttk
 
 class Main:
     # NO AUTO FORMATEAR PORFAVOR QUE SINO SE HACE POCO LEIBLE.
+    # *** FALTA EN REGISTRO BOTON DE RADIO PARA PARTICUALRES O PROFESIONALES ***
+    # *** DATOS DE REGISTARR GUARDAR RESULTADO EN BASE DE DATOS ***
     
-    # ES UN PRE DISEÑO ESTA PARTE PODEMOS CAMBIAR A NUESTRO AGRADO, POR AHORA CREE ALGO MUY SIMPLE PARA IR PRACTICANDO ES LA PANTALLA DE LOGIN
+    
+    # ES UN PRE DISEÑO ESTA PARTE PODEMOS CAMBIAR A NUESTRO AGRADO, POR AHORA CREE ALGO MUY SIMPLE PARA IR PRACTICANDO ES LA PANTALLA DE LOGIN.
     def __init__(self):
         self.ventana = Tk()
         self.ventana.title("Login")
@@ -32,14 +35,18 @@ class Main:
         self.entry_contraseña.pack(pady=(0, 20))
 
         # Botones
-        self.boton_entrar = ttk.Button(self.frame_login, text="Entrar", command=self.verificar_usuario,)  # SI PULSA ESTE BOTON ARRANCA DEF ( METODO ) DE VERIFICAR_USUARIO
+        self.boton_entrar = ttk.Button(self.frame_login, text="Entrar", command=self.verificar_usuario,)    # SI PULSA ESTE BOTON ARRANCA DEF (METODO) DE VERIFICAR_USUARIO
         self.boton_entrar.pack(pady=5)
 
-        self.boton_registrar = ttk.Button(self.frame_login, text="Registrar", command=self.mostrar_registro)
+        self.boton_registrar = ttk.Button(self.frame_login, text="Registrar", command=self.mostrar_registro)    # SI PULSAS ESTE BOTON ARRANCA DEF (METODO) DE MOSTRAR REGISTRO
         self.boton_registrar.pack(pady=5)
 
+        # INTERACCION CON USUARIO Y QUE VENTANA QUEDE ABIERTA HASTA CERRARLA
         self.ventana.mainloop()
 
+
+
+    # ES UN PRE DISEÑO ESTA PARTE PODEMOS CAMBIAR A NUESTRO AGRADO, POR AHORA CREE ALGO MUY SIMPLE PARA IR PRACTICANDO ES LA PANTALLA DE REGISTRO.
     def mostrar_registro(self):
         # OCULTAMOS LO DE LOGIN 
         self.frame_login.place_forget()
@@ -48,49 +55,48 @@ class Main:
         self.frame_registro = ttk.Frame(self.ventana)
         self.frame_registro.place(relx=0.5, rely=0.5, anchor="center")
 
-        # Elementos de registro
-        self.label_usuario_registro = ttk.Label(
-            self.frame_registro, text="Nombre de Usuario", font=("Arial", 12)
-        )
+        # Etiqueta y campo de nombre de usuario
+        self.label_usuario_registro = ttk.Label(self.frame_registro, text="Nombre de Usuario", font=("Arial", 12))
         self.label_usuario_registro.pack(pady=(0, 5))
 
         self.entry_usuario_registro = ttk.Entry(self.frame_registro, width=30)
         self.entry_usuario_registro.pack(pady=(0, 15))
 
+        # Etiqueta y campo de contraseña
         self.label_contraseña_registro = ttk.Label(self.frame_registro, text="Contraseña", font=("Arial", 12))
         self.label_contraseña_registro.pack(pady=(0, 5))
 
         self.entry_contraseña_registro = ttk.Entry(self.frame_registro, width=30, show="*")
         self.entry_contraseña_registro.pack(pady=(0, 15))
 
+        # Etiqueta y campo de correo 
         self.label_correo_registro = ttk.Label(self.frame_registro, text="Correo", font=("Arial", 12))
         self.label_correo_registro.pack(pady=(0, 5))
 
         self.entry_correo_registro = ttk.Entry(self.frame_registro, width=30)
         self.entry_correo_registro.pack(pady=(0, 15))
 
-        # Botones de selección
-
+        # Botones
         self.boton_registrar_confirmar = ttk.Button(self.frame_registro, text="Confirmar Registro",)
         self.boton_registrar_confirmar.pack(pady=10)
         
-        # Botón para volver atrás
-        self.boton_volver = ttk.Button(self.frame_registro, text="Volver Atrás", command=self.volver_atras)
-        
+        self.boton_volver = ttk.Button(self.frame_registro, text="Volver Atrás", command=self.volver_atras)     # SI PULSAS ESTE BOTON ARRANCA DEF (METODO) DE VOLVER ATRAS
         self.boton_volver.pack(pady=5)
         
     
+    
     def volver_atras(self):
-        # Ocultar el frame de registro
+        # OCULTAMOS LO DE REGISTRAR
         self.frame_registro.place_forget()
         
-        # Mostrar el frame de login
+        # MOSTRAMOS LO DE LOGIN
         self.frame_login.place(relx=0.5, rely=0.5, anchor="center")
+
+
 
     # BASICAMENTE RECOGE CONTENIDO DE INPUT DE NOMBRE Y CONTRASEÑA Y MIRA SI HAY USUARIO ASI Y CON SU CONTRASEÑA,
     # HABRA QUE MEJORAR ESTA PARTE, (EXTRESIONES REGULARES PARA QUE NO PEUDAN METERNOS CONSULTA EN EL LOGIN),
     # POR AHORA SOLO AL ENCONTRAR USUARIO ASIVA QUE SE COENCTO PERO NO PARA NADA AQUI METEREMOS YA CAMBIO DE INTEFACE EN FUTURO
-
     def verificar_usuario(self):
         nombre_usuario = self.entry_usuario.get()
         contraseña = self.entry_contraseña.get()
