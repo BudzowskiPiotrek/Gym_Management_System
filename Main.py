@@ -29,12 +29,14 @@ class Main:
         self.label_contraseña = ttk.Label(frame, text="Contraseña", font=("Arial", 12))
         self.label_contraseña.pack(pady=(0, 5))
 
-        self.entry_contraseña = ttk.Entry(frame, width=30, show="*")
+        self.entry_contraseña = ttk.Entry(frame, width=30, show="*") # LA PARTE DE SHOW HACE QUE NO SE VEA LA CONTRASEÑA
         self.entry_contraseña.pack(pady=(0, 20))
 
         # Botones
         self.boton_entrar = ttk.Button(
-            frame, text="Entrar", command=self.verificar_usuario # SI PULSA ESTE BOTON ARRANCA DEF ( METODO ) DE VERIFICAR_USUARIO
+            frame,
+            text="Entrar",
+            command=self.verificar_usuario,  # SI PULSA ESTE BOTON ARRANCA DEF ( METODO ) DE VERIFICAR_USUARIO
         )
         self.boton_entrar.pack(pady=5)
 
@@ -43,30 +45,37 @@ class Main:
 
         self.ventana.mainloop()
 
-    # BASICAMENTE RECOGE CONTENIDO DE INPUT DE NOMBRE Y CONTRASEÑA Y MIRA SI HAY USUARIO ASI Y CON SU CONTRASEÑA, 
+    # BASICAMENTE RECOGE CONTENIDO DE INPUT DE NOMBRE Y CONTRASEÑA Y MIRA SI HAY USUARIO ASI Y CON SU CONTRASEÑA,
     # HABRA QUE MEJORAR ESTA PARTE, (EXTRESIONES REGULARES PARA QUE NO PEUDAN METERNOS CONSULTA EN EL LOGIN),
     # POR AHORA SOLO AL ENCONTRAR USUARIO ASIVA QUE SE COENCTO PERO NO PARA NADA AQUI METEREMOS YA CAMBIO DE INTEFACE EN FUTURO
+
     def verificar_usuario(self):
-        # Obtener los valores ingresados por el usuario
         nombre_usuario = self.entry_usuario.get()
         contraseña = self.entry_contraseña.get()
-        
-         # Expresiones regulares para validar el nombre de usuario y la contraseña
-        patron_usuario = r'^[a-zA-Z0-9ñÑ]+$' 
-        patron_contraseña = r'^[a-zA-Z0-9ñÑ]+$'
-        
-         # Validar nombre de usuario
+
+        # EXPRESIONES REGULARES ESAS HAY QUE PESAR BIEN, PARA PROTEGER LA APP
+        patron_usuario = r"^[a-zA-Z0-9ñÑ]+$"
+        patron_contraseña = r"^[a-zA-Z0-9ñÑ]+$"
+
+        # VALIDAD NOMBRE
         if not re.match(patron_usuario, nombre_usuario):
-            messagebox.showerror("Error", "El nombre de usuario puede tener solo letras y numeros y letra ñ")
-            return  # Salir de la función si no es válido
+            messagebox.showerror(
+                "Error",
+                "El nombre de usuario puede tener solo letras y numeros y letra ñ",
+            )
+            return 
 
-        # Validar contraseña
+        # VALIDAD CONTRASEÑA
         if not re.match(patron_contraseña, contraseña):
-            messagebox.showerror("Error", "La contraseña de usuario puede tener solo letras y numeros y letra ñ")
-            return  # Salir de la función si no es válida
+            messagebox.showerror(
+                "Error",
+                "La contraseña de usuario puede tener solo letras y numeros y letra ñ",
+            )
+            return  
 
-        # Conectar a la base de datos MySQL
+        # CONECTAR A NUESTRA BASE DATOS
         try:
+            # ARRANCANDO LA CONEXION
             conexion = mysql.connector.connect(
                 host="localhost",  # El host es localhost para XAMPP
                 user="root",  # El usuario por defecto de XAMPP es 'root'
@@ -74,9 +83,10 @@ class Main:
                 database="appgym",  # El nombre de la base de datos (***PODEMOS CAMBIARLA CUANDO SEPAMOS NOMBRE DE LA APP***)
             )
 
+            # EL CURSO ES UN OBJETO PARA PODER EJECUTAR LENJUAGE DE SQL, LO DE CONSULTAS
             cursor = conexion.cursor()
 
-            # Consultar en la base de datos si existe el usuario con la contraseña proporcionada
+            # CONSULTA EN CUAL DONDE TIENES %S ENTRAN SUS VARIABLES CORESPONDIENTES
             cursor.execute(
                 """
                 SELECT * FROM usuario
@@ -85,7 +95,7 @@ class Main:
                 (nombre_usuario, contraseña),
             )
 
-            # Comprobar si el usuario existe
+            # TE DA TRUE O FALSE DEPENDIENDO SI ENCONTRO LA CONSULTA DE ARRIB
             resultado = cursor.fetchone()
 
             if resultado:
@@ -95,9 +105,10 @@ class Main:
             else:
                 messagebox.showerror("Error", "Usuario o contraseña incorrectos.")
 
-            # Cerrar la conexión
+            # APAGANDO LA CONEXION
             conexion.close()
 
+        # ESTA PARTE VA DE POR SI NO HAY CONEXION PERO LO CIERTO QUE A FONDO NO SE COMO VA, ES COPIA PEGAR ESA PARTE
         except mysql.connector.Error as e:
             messagebox.showerror(
                 "Error de Conexión",
@@ -105,6 +116,6 @@ class Main:
             )
 
 
-# Ejecutar la interfaz
+# ES COMO EL VOID MAIN EN JAVA. AHI EMPIEZA LA FIESTA
 if __name__ == "__main__":
     Main()
