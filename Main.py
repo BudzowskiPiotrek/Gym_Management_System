@@ -155,7 +155,7 @@ class Main:
             # APAGANDO LA CONEXION
             conexion.close()
             
-        # ESTA PARTE VA DE POR SI NO HAY CONEXION PERO LO CIERTO QUE A FONDO NO SE COMO VA, ES COPIA PEGAR ESA PARTE
+        # ESTA PARTE VA DE POR SI NO HAY CONEXION
         except mysql.connector.Error as e:
             messagebox.showerror("Error de Conexión", f"No se pudo conectar a la base de datos. Error: {e}",)
 
