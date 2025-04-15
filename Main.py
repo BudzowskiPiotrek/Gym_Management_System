@@ -12,7 +12,6 @@ class Main:
 
 
 
-
     # ----LA PANTALLA DE LOGIN----
     def __init__(self):
         self.ventana = Tk()
