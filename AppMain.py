@@ -17,6 +17,7 @@ class AppMain:
         self.ventana.geometry("600x400")
         self.ventana.resizable(False, False)    # NO PERMITE AGRANDAR NI ACHICAR LA VENTANA
         self.frame_actual = None                # NO HAY NINGUNA FRAME VISIBLE EN INICIO
+        self.usuario_datos = None               # <- AQUI SE GUARDARA LA INFORMACION TRAS LOGUEAR
         self.mostrar_login()                    # CARGA LA PRIMERA PANTALLA DE PROGRAMA PAPI
         self.ventana.mainloop()                 # INTERACCION CON USUARIO Y QUE VENTANA QUEDE ABIERTA HASTA CERRARLA
 
@@ -40,5 +41,8 @@ class AppMain:
         self.cambiar_frame(HomeFrame)
 
 
+# EJECUTA LA APP SOLO SI ESTE ARCHIVO ES EL PRINCIPAL
+# CREA UNA INSTANCIA DE LA VENTANA Y LA INICIA
+# ES COMO public static void main(String[] args) EN JAVA
 if __name__ == "__main__":
     AppMain()
