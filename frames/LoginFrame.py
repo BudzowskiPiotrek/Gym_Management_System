@@ -12,18 +12,18 @@ class LoginFrame(ttk.Frame):
         self.place(relx=0.5, rely=0.5, anchor="center")
         
         # Etiqueta y campo de nombre de usuario
-        ttk.Label(self, text="Nombre de Usuario").pack(pady=5)
-        self.entry_usuario = ttk.Entry(self)
-        self.entry_usuario.pack(pady=5)
+        ttk.Label(self, text="Nombre de Usuario").pack(pady=0)
+        self.entry_usuario = ttk.Entry(self, width=40)
+        self.entry_usuario.pack(pady=10)
         
         # Etiqueta y campo de contraseña
-        ttk.Label(self, text="Contraseña").pack(pady=5)
-        self.entry_contraseña = ttk.Entry(self, show="*")
-        self.entry_contraseña.pack(pady=5)
+        ttk.Label(self, text="Contraseña").pack(pady=0)
+        self.entry_contraseña = ttk.Entry(self, width=40, show="*")
+        self.entry_contraseña.pack(pady=10)
         
         # Botones
-        ttk.Button(self, text="Entrar", command=self.verificar_usuario).pack(pady=5)
-        ttk.Button(self, text="Registrar", command=self.app.mostrar_registro).pack(pady=5)
+        ttk.Button(self, text="Entrar", width=40, command=self.verificar_usuario).pack(pady=5)
+        ttk.Button(self, text="Registrar", width=40, command=self.app.mostrar_registro).pack(pady=5)
 
 
     # ESTE METODO RECOJE VARIABLE DE NOMBRE Y CONTRASEÑA DE IMPUT, CONECTA CON LA BASE DE DATOS

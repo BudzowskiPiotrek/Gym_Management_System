@@ -2,6 +2,11 @@ from tkinter import Tk
 from frames.LoginFrame import LoginFrame
 from frames.RegisterFrame import RegisterFrame
 from frames.HomeFrame import HomeFrame
+from frames.RoutineFrame import RoutineFrame
+from frames.WorkoutFrame import WorkoutFrame
+from frames.HistoryFrame import HistoryFrame
+from frames.SettingsFrame import SettingsFrame
+
 
 class AppMain:
     # *** NO FORMATEAR TEXTO PORFAVOR SINO SE HACE POCO LEIBLE ***
@@ -13,7 +18,7 @@ class AppMain:
     # AJUSTES GENERALES DE LA VENTANA
     def __init__(self):
         self.ventana = Tk()
-        self.ventana.title("Login")
+        self.ventana.title("App GymBro-2025")
         self.ventana.geometry("600x400")
         self.ventana.resizable(False, False)    # NO PERMITE AGRANDAR NI ACHICAR LA VENTANA
         self.frame_actual = None                # NO HAY NINGUNA FRAME VISIBLE EN INICIO
@@ -39,6 +44,22 @@ class AppMain:
 
     def mostrar_inicio(self):
         self.cambiar_frame(HomeFrame)
+
+
+    def mostrar_rutina(self):
+        self.cambiar_frame(RoutineFrame)
+
+
+    def mostrar_entrenamiento(self):
+        self.cambiar_frame(WorkoutFrame)
+
+
+    def mostrar_historial(self):
+        self.cambiar_frame(HistoryFrame)
+
+
+    def mostrar_ajustes(self):
+        self.cambiar_frame(SettingsFrame)
 
 
 # EJECUTA LA APP SOLO SI ESTE ARCHIVO ES EL PRINCIPAL
