@@ -25,7 +25,7 @@ class HomeFrame(ttk.Frame):
         # Botón para Ajustes
         ttk.Button(self, text="Ajustes", command=self.app.mostrar_ajustes, width=40).pack(pady=5)
         
-        # Botón para Ajustes
+        # Botón para Salir
         ttk.Button(self, text="Salir", command=self.app.mostrar_login, width=40).pack(pady=5)
         
         
