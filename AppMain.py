@@ -1,4 +1,5 @@
 from tkinter import Tk
+import mysql.connector
 from frames.LoginFrame import LoginFrame
 from frames.RegisterFrame import RegisterFrame
 from frames.HomeFrame import HomeFrame
