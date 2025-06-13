@@ -62,7 +62,7 @@ class BDConector:
     # o 'error_conexion' si no se pudo conectar.
     def registrar_usuario_bd(self, nombre_usuario, contraseña, correo):
         self.conectar() # Intenta conectar a la base de datos
-        
+
         if not self.conexion or not self.conexion.is_connected():
             print("Error: No se pudo establecer conexión a la base de datos para el registro.")
             return 'error_conexion'
@@ -87,6 +87,42 @@ class BDConector:
             
         except mysql.connector.Error as err:
             print(f"Error al registrar usuario: {err}")
+            return False
+        finally:
+            self.desconectar() # Asegura que la conexión se cierre al finalizar
+
+    # CAMBIA LA CONTRASEÑA DE UN USUARIO EXISTENTE EN LA BASE DE DATOS.
+    # RETORNA:
+    # - True si la contraseña se actualizó correctamente.
+    # - False si el usuario no se encuentra o si ocurre un error en la base de datos.
+    # - 'error_conexion' si no se pudo establecer la conexión a la base de datos.
+    def cambiar_contrasena_bd(self, nombre_usuario, nueva_contraseña):
+        self.conectar() # Intenta conectar a la base de datos
+
+        if not self.conexion or not self.conexion.is_connected():
+            print("Error: No se pudo establecer conexión a la base de datos para cambiar la contraseña.")
+            return 'error_conexion'
+
+        try:
+            cursor = self.conexion.cursor()
+            # Actualizar la contraseña del usuario
+            query = """
+                UPDATE usuario
+                SET contraseña = %s
+                WHERE nombre_usuario = %s
+            """
+            cursor.execute(query, (nueva_contraseña, nombre_usuario))
+            self.conexion.commit() # Guardar los cambios
+            
+            # Verificar si se actualizó alguna fila
+            if cursor.rowcount > 0:
+                cursor.close()
+                return True
+            else:
+                cursor.close()
+                return False # Usuario no encontrado o contraseña ya era la misma
+        except mysql.connector.Error as err:
+            print(f"Error al cambiar contraseña: {err}")
             return False
         finally:
             self.desconectar() # Asegura que la conexión se cierre al finalizar
