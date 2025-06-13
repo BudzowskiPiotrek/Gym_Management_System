@@ -8,9 +8,9 @@ class RegisterFrame(ttk.Frame):
     # ----LA PANTALLA DE LOGIN----
     def __init__(self, parent, app):
         super().__init__(parent)
-        self.db_conector = BDConector() # CREAMOS CONECTOR AQUI!
-        
         self.app = app
+        self.db_conector = BDConector() # CREAMOS CONECTOR AQUI!
+
         # Aquí se controla la posición dentro del frame
         self.place(relx=0.5, rely=0.5, anchor="center")
         
