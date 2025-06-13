@@ -1,4 +1,5 @@
 from tkinter import ttk, messagebox
+from Clases.BDConector import BDConector
 import mysql.connector
 import re
 
@@ -7,6 +8,8 @@ class RegisterFrame(ttk.Frame):
     # ----LA PANTALLA DE LOGIN----
     def __init__(self, parent, app):
         super().__init__(parent)
+        self.db_conector = BDConector() # CREAMOS CONECTOR AQUI!
+        
         self.app = app
         # Aquí se controla la posición dentro del frame
         self.place(relx=0.5, rely=0.5, anchor="center")
@@ -56,40 +59,26 @@ class RegisterFrame(ttk.Frame):
             messagebox.showerror("Error", "El correo electrónico ingresado no tiene un formato válido. Asegúrate de incluir un '@' y un dominio como '.com', '.org', etc.")
             return
 
-        try:
-            # ARRANCANDO LA CONEXION
-            conexion = mysql.connector.connect(
-                host="localhost",  # El host es localhost para XAMPP
-                user="root",  # El usuario por defecto de XAMPP es 'root'
-                password="",  # No hay contraseña por defecto (***POR AHORA***)
-                database="appgym",  # El nombre de la base de datos (***PODEMOS CAMBIARLA CUANDO SEPAMOS NOMBRE DE LA APP***)
-            )
+        
+        try:                            # Intentar registrar el usuario usando el método de BDConector
+            resultado_registro = self.db_conector.registrar_usuario_bd(nombre, contraseña, correo)
             
-            # EL CURSO ES UN OBJETO PARA PODER EJECUTAR LENJUAGE DE SQL, LO DE CONSULTAS
-            cursor = conexion.cursor()
-            
-            # CONSULTAR SI EL USUARIO YA EXISTE
-            cursor.execute("SELECT * FROM usuario WHERE nombre_usuario = %s", (nombre,))
-            usuario_existente = cursor.fetchone()
-            
-            if usuario_existente:
-                messagebox.showerror("Error", "El nombre de usuario ya está en uso. Elige otro.")
-                return
-            
-            # INSERTAR NUEVO USUARIO CON tipo = 'Usuario'
-            try:
-                cursor.execute("INSERT INTO usuario (nombre_usuario, contraseña, correo, tipo) VALUES (%s, %s, %s, %s)",
-                    (nombre, contraseña, correo, 'Usuario')
-                )
-                conexion.commit()   # PARA GUARDAR LOS CAMBIOS EN LA BASE DE DATOS
+            if resultado_registro is True:
                 messagebox.showinfo("Éxito", "Usuario registrado correctamente.")
                 
-            except mysql.connector.Error as e:
-                messagebox.showerror("Error", f"No se pudo registrar el usuario. Error: {e}")
-            finally:
-                cursor.close()
-                conexion.close()
+                self.app.mostrar_login() # Si el registro fue exitoso, volvemos a la pantalla de login
                 
-        # ESTA PARTE VA DE POR SI NO HAY CONEXION
+            elif resultado_registro == 'usuario_existente':
+                messagebox.showerror("Error", "El nombre de usuario ya está en uso. Elige otro.")
+                
+            elif resultado_registro == 'error_conexion':
+                messagebox.showerror("Error de Conexión", "No se pudo conectar a la base de datos para el registro. Verifica XAMPP y la configuración de la BD.")
+                
+            else:                        # Esto capturaría el 'False' retornado por un error genérico de base de datos
+                messagebox.showerror("Error", "No se pudo registrar el usuario debido a un problema interno. Contacta al soporte.")
+                
+                                        # Captura errores específicos de MySQL que puedan ocurrir durante la interacción
         except mysql.connector.Error as e:
-            messagebox.showerror("Error de Conexión", f"No se pudo conectar a la base de datos. Error: {e}",)
+            messagebox.showerror("Error DB", f"Ocurrió un error con la base de datos: {e}")
+        except Exception as e:          # Captura cualquier otra excepción inesperada
+            messagebox.showerror("Error", f"Ocurrió un error inesperado durante el registro: {e}")
