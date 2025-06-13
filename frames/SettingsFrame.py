@@ -29,8 +29,6 @@ class SettingsFrame(ttk.Frame):
         # Botón para cambiar la contraseña
         ttk.Button(self, text="Cambiar Contraseña", width=40, command=self.cambiar_contraseña).pack(pady=10)
         
-
-        
         # Botón para volver atrás
         ttk.Button(self, text="Volver atrás", width=40, command=self.app.mostrar_inicio).pack(pady=10)
 
