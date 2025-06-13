@@ -1,4 +1,5 @@
 from tkinter import ttk, messagebox
+from Clases.BDConector import BDConector
 import mysql.connector
 import re
 
@@ -8,6 +9,8 @@ class LoginFrame(ttk.Frame):
     def __init__(self, parent, app):
         super().__init__(parent)
         self.app = app
+        self.db_conector = BDConector() # CREAMOS CONECTOR AQUI!
+        
         # Aquí se controla la posición dentro del frame
         self.place(relx=0.5, rely=0.5, anchor="center")
         
@@ -47,39 +50,18 @@ class LoginFrame(ttk.Frame):
         
         # CONECTAR A NUESTRA BASE DATOS
         try:
-            # ARRANCANDO LA CONEXION
-            conexion = mysql.connector.connect(
-                host="localhost",   # El host es localhost para XAMPP
-                user="root",        # El usuario por defecto de XAMPP es 'root'
-                password="",        # No hay contraseña por defecto (***POR AHORA***)
-                database="appgym",  # El nombre de la base de datos (***PODEMOS CAMBIARLA CUANDO SEPAMOS NOMBRE DE LA APP***)
-            )
-            
-            # EL CURSO ES UN OBJETO PARA PODER EJECUTAR LENJUAGE DE SQL, LO DE CONSULTAS
-            cursor = conexion.cursor()
-            
-            # CONSULTA EN CUAL DONDE TIENES %S ENTRAN SUS VARIABLES CORESPONDIENTES
-            cursor.execute(
-                """
-                SELECT * FROM usuario
-                WHERE nombre_usuario = %s AND contraseña = %s
-            """,
-                (nombre_usuario, contraseña),
-            )
-            
-            # TE DA TRUE O FALSE DEPENDIENDO SI ENCONTRO LA CONSULTA DE ARRIB
-            resultado = cursor.fetchone()
+            # Login ya maneja la conexión y desconexión internamente.
+            resultado = self.db_conector.Login(nombre_usuario, contraseña)
             
             if resultado:
                 messagebox.showinfo("Éxito", "Usuario autenticado")
-                # (*** JUSTO AQUI HAY QUE CARGAR TODOS DATOS DESDE LA ABSE DE DATOS PARA UNA COLECCION ***)
                 self.app.mostrar_inicio()   # CARGA LA PRIMERA PANTALLA DE PROGRAMA PAPI! 
+                #app.usuario_datos=nombre_usuario
             else:
                 messagebox.showerror("Error", "Usuario o contraseña incorrectos")
                 
-            # APAGANDO LA CONEXION
-            conexion.close()
-            
-        # ESTA PARTE VA DE POR SI NO HAY CONEXION
+        # ESTA PARTE VA DE POR SI NO HAY CONEXION O ERROR DE BASE DE DATOS
         except mysql.connector.Error as e:
-            messagebox.showerror("Error DB", f"No se pudo conectar a la base de datos. Error: {e}")
+            messagebox.showerror("Error DB", f"Ocurrió un error con la base de datos: {e}")
+        except Exception as e:
+            messagebox.showerror("Error", f"Ocurrió un error inesperado: {e}")
