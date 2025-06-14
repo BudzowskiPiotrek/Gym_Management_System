@@ -11,21 +11,26 @@ class HomeFrame(ttk.Frame):
         self.place(relx=0.5, rely=0.5, anchor="center")
         
         # Título de bienvenida
-        ttk.Label(self, text="Bienvenido a la app", font=("Arial", 16)).pack(pady=30)
+        ttk.Label(self, text="Bienvenido a la app", font=("Arial", 16)).pack(pady=15)
         
         # Botón para Registrar Rutina Nueva
-        ttk.Button(self, text="Registrar Rutina Nueva", command=self.app.mostrar_rutina, width=40).pack(pady=20)
+        ttk.Button(self, text="Registrar Rutina Nueva", command=self.app.mostrar_rutina, width=40).pack(pady=15)
         
         # Botón para Registrar Entrenamiento
-        ttk.Button(self, text="Registrar Entrenamiento", command=self.app.mostrar_entrenamiento, width=40).pack(pady=20)
+        ttk.Button(self, text="Registrar Entrenamiento", command=self.app.mostrar_entrenamiento, width=40).pack(pady=15)
+        
+        # Botón para Registrar Ejercicio
+        ttk.Button(self, text="Registrar Ejercicio", command=self.app.registar_ejercicio, width=40).pack(pady=15)
+        
         
         # Botón para Historial
-        ttk.Button(self, text="Historial de Entrenamientos", command=self.app.mostrar_historial, width=40).pack(pady=20)
+        ttk.Button(self, text="Historial de Entrenamientos", command=self.app.seleccionar_dia_entrenado, width=40).pack(pady=15)
+        
         
         # Botón para Ajustes
-        ttk.Button(self, text="Ajustes", command=self.app.mostrar_ajustes, width=40).pack(pady=5)
+        ttk.Button(self, text="Ajustes", command=self.app.mostrar_ajustes, width=40).pack(pady=15)
         
         # Botón para Ajustes
-        ttk.Button(self, text="Salir", command=self.app.mostrar_login, width=40).pack(pady=5)
+        ttk.Button(self, text="Salir", command=self.app.mostrar_login, width=40).pack(pady=0)
         
         

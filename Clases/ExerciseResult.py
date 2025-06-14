@@ -1,4 +1,4 @@
-from Exercise import Exercise
+from Clases.Exercise import Exercise
 
 
 class ExerciseResult:
