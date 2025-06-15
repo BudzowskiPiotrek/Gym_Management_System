@@ -76,9 +76,12 @@ class SelectNewDayTraining(ttk.Frame):
             for ent in self.lista_entrenamientos:
                 texto_opcion = f"{ent.dia} - {ent.fecha.strftime('%d/%m/%Y')}"
                 opciones_display.append(texto_opcion)
-        else:
-            opciones_display.append("No hay entrenamientos disponibles")
-            
+
+
+        opciones_display.append("--- Nuevo entreno Piernas ---")
+        opciones_display.append("--- Nuevo entreno Tirón ---")
+        opciones_display.append("--- Nuevo entreno Empuje ---")
+
         self.desplegable['values'] = opciones_display
 
 
@@ -96,6 +99,6 @@ class SelectNewDayTraining(ttk.Frame):
 
     def cargar_entrenamiento_seleccionado_y_mostrar_historial(self):
         if self.entrenamiento_seleccionado:
-            self.app.mostrar_entrenamiento()
+            self.app.mostrar_entrenamiento(self.entrenamiento_seleccionado)
         else:
             print("Error: No hay ningún entrenamiento seleccionado.")
