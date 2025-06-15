@@ -9,6 +9,3 @@ class Routines:
         self.nombre=nombre
         self.fecha=fecha
         self.dia: list[RoutineDay] = []#Lista de tipo de dia de entreno
-        
-    def __repr__(self):
-        return f"Routines(id={self.id}, nombre='{self.nombre}')"

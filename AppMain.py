@@ -8,7 +8,6 @@ from frames.WorkoutFrame import WorkoutFrame
 from frames.HistoryFrame import HistoryFrame
 from frames.SettingsFrame import SettingsFrame
 from frames.SelectDayTraining import SelectDayTraining
-from frames.SelectRoutine import SelectRoutine
 from frames.SelectNewDayTraining import SelectNewDayTraining
 
 
@@ -57,11 +56,7 @@ class AppMain():
         self.cambiar_frame(RoutineFrame)
 
 
-    def seleccionar_entreno_rutina(self):
-        self.cambiar_frame(SelectRoutine)
-
-
-    def registrar_entrenamiento(self):#antes llamado "mostrar_entrenamiento"
+    def mostrar_entrenamiento(self):
         self.cambiar_frame(WorkoutFrame)
 
 
