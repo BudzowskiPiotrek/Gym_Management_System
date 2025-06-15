@@ -55,7 +55,7 @@ class LoginFrame(ttk.Frame):
             
             if resultado:
                 messagebox.showinfo("Éxito", "Usuario autenticado")
-                self.app.usuario_datos = nombre_usuario # GUARDAMOS NOMBRE DE USUARIO DESPEUS DE ENTRAR
+                self.app.usuario_datos = resultado['id']  # GUARDAMOS NOMBRE DE USUARIO DESPEUS DE ENTRAR
                 self.app.mostrar_inicio()   # CARGA LA PRIMERA PANTALLA DE PROGRAMA PAPI! 
                 
             else:
