@@ -1,18 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
 from Clases.BDConector import BDConector
-from datetime import date, timedelta
 from Clases.Training import Training 
-from Clases.Exercise import Exercise 
-from Clases.ExerciseResult import ExerciseResult
-from Clases.RoutineDay import RoutineDay
-from Clases.Routines import Routines
+
 import re
-
-
-# --- Clases de Modelo de Datos (Las que proporcionaste) ---
-# He añadido un método __repr__ para facilitar la depuración (imprimir objetos).
-# --- La nueva clase Frame para la selección ---
 
 class SelectDayTraining(ttk.Frame):
     def __init__(self, parent, app):
@@ -35,7 +26,6 @@ class SelectDayTraining(ttk.Frame):
         else:
             print("Advertencia: No se pudo obtener el ID del usuario. No se cargarán entrenamientos desde la base de datos.")
 
-
         print("\n--- Entrenamientos Cargados (desde BD o vacíos) ---")
         if self.lista_entrenamientos:
 
@@ -45,9 +35,8 @@ class SelectDayTraining(ttk.Frame):
             print("No hay entrenamientos para mostrar.")
         print("--------------------------------------------------\n")
 
-
         self.entrenamiento_seleccionado: Training | None = None
-
+        
         # --- Configuración del Grid Layout ---
         self.pack()
         # --- TEXTO DE ARRIBA ---
@@ -62,16 +51,15 @@ class SelectDayTraining(ttk.Frame):
         # --- El Desplegable (Combobox) ---
         self.desplegable = ttk.Combobox(combo_frame, state="readonly")
         self.desplegable.grid(row=0, column=1, sticky="ew")
-
+        
         # --- Botón para Cargar ---
-        # El estado inicial dependerá de si hay entrenamientos cargados
         self.boton_cargar = ttk.Button(self, text="Cargar Entrenamiento", command=self.cargar_entrenamiento_seleccionado_y_mostrar_historial, state="disabled")
         self.boton_cargar.pack(pady=20)
         
         # --- Lógica de llenado y eventos ---
         self.poblar_desplegable()
         self.desplegable.bind("<<ComboboxSelected>>", self.on_seleccion_cambia)
-
+        
         # Pre-seleccionar el primer elemento si la lista no está vacía
         if self.lista_entrenamientos:
             self.desplegable.set(self.desplegable['values'][0]) # Establece el primer elemento como preseleccionado
@@ -84,14 +72,9 @@ class SelectDayTraining(ttk.Frame):
 
 
     def poblar_desplegable(self):
-        """
-        Crea las cadenas de texto para el usuario y las carga en el Combobox
-        a partir de la lista de entrenamientos cargados desde la BD.
-        """
         opciones_display = []
         if self.lista_entrenamientos:
             for ent in self.lista_entrenamientos:
-                # Formateamos una cadena legible para el usuario.
                 texto_opcion = f"{ent.dia} - {ent.fecha.strftime('%d/%m/%Y')}"
                 opciones_display.append(texto_opcion)
         else:
@@ -99,16 +82,11 @@ class SelectDayTraining(ttk.Frame):
             
         self.desplegable['values'] = opciones_display
 
-    def on_seleccion_cambia(self, event):
-        """
-        Se ejecuta cuando cambia la selección en el Combobox.
-        """
-        # Obtenemos el índice de la opción seleccionada.
-        indice_seleccionado = self.desplegable.current()
 
+    def on_seleccion_cambia(self, event):
+        indice_seleccionado = self.desplegable.current()
         if 0 <= indice_seleccionado < len(self.lista_entrenamientos):
             self.entrenamiento_seleccionado = self.lista_entrenamientos[indice_seleccionado]
-            # Habilitamos el botón de cargar ahora que hay una selección válida.
             self.boton_cargar.config(state="normal")
             print(f"Selección interna cambiada a: {repr(self.entrenamiento_seleccionado)}")
         else:
@@ -118,12 +96,7 @@ class SelectDayTraining(ttk.Frame):
 
 
     def cargar_entrenamiento_seleccionado_y_mostrar_historial(self):
-        """
-        Se ejecuta al pulsar el botón. Pasa el objeto seleccionado al controlador principal.
-        """
         if self.entrenamiento_seleccionado:
-            # Llama al método de tu `app` para pasar el entrenamiento
-            # y mostrar la vista del historial.
             self.app.mostrar_historial(self.entrenamiento_seleccionado)
         else:
             print("Error: No hay ningún entrenamiento seleccionado.")
