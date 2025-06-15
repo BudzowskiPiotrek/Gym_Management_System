@@ -1,19 +1,13 @@
 import tkinter as tk
 from tkinter import ttk
 from Clases.Training import Training
-from Clases.Exercise import Exercise 
-from Clases.ExerciseResult import ExerciseResult 
 
 class HistoryFrame(ttk.Frame):
-    """
-    Frame para mostrar el historial de entrenamientos, agrupado por ejercicio, sin edición.
-    """
 
-    # ¡CORRECCIÓN AQUÍ! El __init__ ahora acepta un parámetro training_data opcional.
     def __init__(self, parent, app, training_data: Training = None):
         super().__init__(parent)
         self.app = app
-        self.training_data = training_data # Guarda el objeto Training que se ha pasado
+        self.training_data = training_data 
         
         self.place(relx=0.5, rely=0.5, anchor="center")
         
@@ -63,7 +57,7 @@ class HistoryFrame(ttk.Frame):
             button_frame, text="Volver atrás", command=self.app.mostrar_inicio
         ).grid(row=0, column=0, padx=5, sticky="ew")
 
-        # ¡CORRECCIÓN AQUÍ! Llama a cargar_entrenamiento_en_historial si se pasa el objeto Training
+
         if self.training_data:
             self.cargar_entrenamiento_en_historial(self.training_data)
         else:
@@ -71,15 +65,10 @@ class HistoryFrame(ttk.Frame):
 
 
     def llenar_tabla(self, training_data: Training):
-        """
-        Llena la tabla con los datos del objeto Training proporcionado.
-        """
         for item in self.tabla.get_children():
             self.tabla.delete(item)
 
         ejercicio_nombres = {
-            # Asumiendo IDs de ejercicios de tu script SQL anterior
-            # Piernas:
             1: "Sentadilla con barra", 2: "Prensa de piernas", 3: "Extensiones de cuádriceps",
             4: "Curl femoral", 5: "Sentadilla búlgara", 6: "Gemelos en máquina de pie",
             7: "Zancadas con mancuernas", 8: "Hip thrust",
@@ -94,7 +83,7 @@ class HistoryFrame(ttk.Frame):
         }
 
         ejercicios_agrupados = {}
-        if training_data.resultado: # Asegurarse de que hay resultados
+        if training_data.resultado: 
             for resultado_ejercicio in training_data.resultado:
                 ejercicio_id = resultado_ejercicio.ejercicio_id
                 if ejercicio_id not in ejercicios_agrupados:
@@ -120,8 +109,5 @@ class HistoryFrame(ttk.Frame):
 
 
     def cargar_entrenamiento_en_historial(self, entrenamiento: Training):
-        """
-        Método público para cargar un objeto Training en la vista del historial.
-        """
         self.llenar_tabla(entrenamiento)
         self.grid_slaves(row=0, column=0)[0].config(text=f"Registro de Entrenamiento: {entrenamiento.dia} - {entrenamiento.fecha.strftime('%d/%m/%Y')}")
