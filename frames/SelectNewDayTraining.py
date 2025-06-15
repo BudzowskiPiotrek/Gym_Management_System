@@ -146,7 +146,7 @@ class SelectNewDayTraining(ttk.Frame):
             nuevo_entrenamiento_creado = self.db_conector.CrearNuevoEntrenamientoConEjerciciosPredeterminados(
                 self.user_id, "Piernas")
             if nuevo_entrenamiento_creado:
-                self.app.mostrar_entrenamiento(nuevo_entrenamiento_creado)
+                self.app.seleccionar_nuevo_dia_entrenado()
             else:
                 print("No se pudo crear el nuevo entrenamiento de Piernas en la base de datos.")
         else:
@@ -159,7 +159,7 @@ class SelectNewDayTraining(ttk.Frame):
             nuevo_entrenamiento_creado = self.db_conector.CrearNuevoEntrenamientoConEjerciciosPredeterminados(
                 self.user_id, "Tirón")
             if nuevo_entrenamiento_creado:
-                self.app.mostrar_entrenamiento(nuevo_entrenamiento_creado)
+                self.app.seleccionar_nuevo_dia_entrenado()
             else:
                 print("No se pudo crear el nuevo entrenamiento de Tirón en la base de datos.")
         else:
@@ -172,7 +172,7 @@ class SelectNewDayTraining(ttk.Frame):
             nuevo_entrenamiento_creado = self.db_conector.CrearNuevoEntrenamientoConEjerciciosPredeterminados(
                 self.user_id, "Empuje")
             if nuevo_entrenamiento_creado:
-                self.app.mostrar_entrenamiento(nuevo_entrenamiento_creado)
+                self.app.seleccionar_nuevo_dia_entrenado()
             else:
                 print("No se pudo crear el nuevo entrenamiento de Empuje en la base de datos.")
         else:
