@@ -8,7 +8,7 @@ from frames.WorkoutFrame import WorkoutFrame
 from frames.HistoryFrame import HistoryFrame
 from frames.SettingsFrame import SettingsFrame
 from frames.SelectDayTraining import SelectDayTraining
-
+from frames.SelectNewDayTraining import SelectNewDayTraining
 
 
 class AppMain():
@@ -63,10 +63,13 @@ class AppMain():
     def registar_ejercicio(self):
         self.cambiar_frame(WorkoutFrame)
 
-    
 
     def seleccionar_dia_entrenado(self):
         self.cambiar_frame(SelectDayTraining)
+
+
+    def seleccionar_nuevo_dia_entrenado(self):
+        self.cambiar_frame(SelectNewDayTraining)
 
 
     def mostrar_historial(self, entrenamiento_seleccionado: Training):
