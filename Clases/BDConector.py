@@ -1,4 +1,5 @@
 from datetime import date
+import sqlite3
 import mysql.connector
 from Clases.Training import Training 
 from Clases.Exercise import Exercise 
@@ -307,3 +308,17 @@ class BDConector:
             return None
         finally:
             self.desconectar()
+
+
+def guardar_resultados_entrenamiento(self, datos, entrenamiento_id):
+    conn = self.conexion  # o como se llame tu conexión
+    cursor = conn.cursor()
+    for ejercicio, series in datos.items():
+        ejercicio_id = self.obtener_id_ejercicio_por_nombre(ejercicio)
+        for idx, serie in enumerate(series, 1):
+            kg, reps, esfuerzo = serie
+            cursor.execute(
+                "INSERT OR REPLACE INTO resultados_ejercicios (entrenamiento_id, ejercicio_id, serie, peso_usado, reps_reales, esfuerzo_real) VALUES (?, ?, ?, ?, ?, ?)",
+                (entrenamiento_id, ejercicio_id, idx, kg, reps, esfuerzo)
+            )
+    conn.commit()

@@ -1,6 +1,7 @@
 from tkinter import Tk
 from tkinter import ttk, messagebox
 from Clases.Training import Training
+from Clases.BDConector import BDConector
 import mysql.connector
 import re
 import tkinter as tk # Importar tk para tk.W, tk.END, etc.
@@ -10,6 +11,8 @@ class WorkoutFrame(ttk.Frame):
 
     def __init__(self, parent, app, training_data: Training = None):
         super().__init__(parent)
+        self.db_conector = BDConector()
+        
         self.app = app
         self.training_data = training_data
         self.entry_popup = None  # Para mantener una referencia al Entry de edición
@@ -222,17 +225,22 @@ class WorkoutFrame(ttk.Frame):
 
 
     def guardar_cambios(self):
-        """Extrae todos los datos del Treeview y los muestra."""
-        print("--- GUARDANDO CAMBIOS ---")
         datos_finales = {}
         for parent_id in self.tabla.get_children():
             ejercicio = self.tabla.item(parent_id, "text")
             series = []
             for child_id in self.tabla.get_children(parent_id):
-                # Obtenemos los valores, ignorando el primero ("Serie X")
                 valores = self.tabla.item(child_id, "values")[1:]
                 series.append(valores)
             datos_finales[ejercicio] = series
+
+        # GUARDAR EN BASE DE DATOS
+        if hasattr(self.app, "db_conector"):
+            # Opcionalmente puedes pasar más datos como el ID del entrenamiento
+            self.app.db_conector.guardar_resultados_entrenamiento(datos_finales, self.training_data.id)
+            print("¡Cambios guardados en la base de datos!")
+        else:
+            print("No se encontró el conector a base de datos.")
 
         import json
 
