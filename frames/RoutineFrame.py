@@ -11,7 +11,7 @@ class RoutineFrame(ttk.Frame):
         self.place(relx=0.5, rely=0.5, anchor="center")
         
         # Título de bienvenida
-        ttk.Label(self, text="Bienvenido en registrar rutina nueva", font=("Arial", 16)).pack(pady=30)
+        ttk.Label(self, text="Opcion Disponible desde version 2.0", font=("Arial", 16)).pack(pady=30)
         
         # Botón para volver atrás
         ttk.Button(self, text="Volver atrás", width=40, command=self.app.mostrar_inicio).pack(pady=10)

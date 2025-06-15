@@ -20,6 +20,7 @@ class AppMain():
     
     # AJUSTES GENERALES DE LA VENTANA
     def __init__(self):
+        
         self.ventana = Tk()
         self.ventana.title("App GymBro-2025")
         self.ventana.geometry("600x400")

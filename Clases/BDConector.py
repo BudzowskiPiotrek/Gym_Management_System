@@ -286,7 +286,7 @@ class BDConector:
                     # También añadir a la lista de resultados del objeto Training
                     nuevo_entrenamiento.resultado.append(
                         ExerciseResult(
-                            id=0, # ID será asignado por la BD al guardar realmente, aquí es temporal
+                            id=0,
                             entrenamiento_id=nuevo_entrenamiento_id,
                             ejercicio_id=ejercicio_id,
                             serie=serie_num,
@@ -295,7 +295,7 @@ class BDConector:
                             esfuerzoReal=0
                         )
                     )
-            self.conexion.commit() # Confirmar todas las inserciones de resultados
+            self.conexion.commit() 
 
             cursor.close()
             print(f"Nuevo entrenamiento con ID {nuevo_entrenamiento_id} y sus ejercicios predeterminados creados exitosamente.")
@@ -304,21 +304,65 @@ class BDConector:
         except mysql.connector.Error as err:
             print(f"Error al crear nuevo entrenamiento con ejercicios predeterminados: {err}")
             if self.conexion and self.conexion.is_connected():
-                self.conexion.rollback() # Deshacer cambios si hay un error
+                self.conexion.rollback() 
             return None
         finally:
             self.desconectar()
 
 
-def guardar_resultados_entrenamiento(self, datos, entrenamiento_id):
-    conn = self.conexion  # o como se llame tu conexión
-    cursor = conn.cursor()
-    for ejercicio, series in datos.items():
-        ejercicio_id = self.obtener_id_ejercicio_por_nombre(ejercicio)
-        for idx, serie in enumerate(series, 1):
-            kg, reps, esfuerzo = serie
-            cursor.execute(
-                "INSERT OR REPLACE INTO resultados_ejercicios (entrenamiento_id, ejercicio_id, serie, peso_usado, reps_reales, esfuerzo_real) VALUES (?, ?, ?, ?, ?, ?)",
-                (entrenamiento_id, ejercicio_id, idx, kg, reps, esfuerzo)
-            )
-    conn.commit()
+    def guardar_resultados_entrenamiento(self, datos, entrenamiento_id):
+        if not self.conexion:
+            self.conectar()
+        if not self.conexion:
+            print("No se pudo establecer conexión con la base de datos.")
+            return
+
+        cursor = self.conexion.cursor()
+        try:
+            for ejercicio, series in datos.items():
+                ejercicio_id = self.obtener_id_ejercicio_por_nombre(ejercicio)
+                if ejercicio_id is None:
+                    print(f"No se encontró ID para el ejercicio '{ejercicio}'. Saltando.")
+                    continue
+                for idx, serie in enumerate(series, 1):
+                    kg, reps, esfuerzo = serie
+                    print("Insertando:", entrenamiento_id, ejercicio_id, idx, reps, kg, esfuerzo)
+                    cursor.execute(
+                        """
+                        INSERT INTO resultados_ejercicios
+                        (entrenamiento_id, ejercicio_id, serie, repeticiones_reales, peso_usado, esfuerzo_real)
+                        VALUES (%s, %s, %s, %s, %s, %s)
+                        ON DUPLICATE KEY UPDATE
+                            repeticiones_reales=VALUES(repeticiones_reales),
+                            peso_usado=VALUES(peso_usado),
+                            esfuerzo_real=VALUES(esfuerzo_real)
+                        """,
+                        (entrenamiento_id, ejercicio_id, idx, reps, kg, esfuerzo)
+                    )
+            self.conexion.commit()
+            print("¡Cambios guardados en la base de datos!")
+        except Exception as e:
+            print(f"Error al guardar los cambios: {e}")
+        finally:
+            cursor.close()
+            self.desconectar()
+
+
+    def obtener_id_ejercicio_por_nombre(self, nombre_ejercicio):
+        if not self.conexion or not self.conexion.is_connected():
+            self.conectar()
+
+        if not self.conexion or not self.conexion.is_connected():
+            print("Error: No se pudo establecer conexión para obtener ID de ejercicio.")
+            return None
+
+        cursor = self.conexion.cursor(dictionary=True) 
+        try:
+            cursor.execute("SELECT id FROM ejercicios WHERE nombre = %s", (nombre_ejercicio,))
+            row = cursor.fetchone()
+            return row['id'] if row else None
+        except mysql.connector.Error as err:
+            print(f"Error al obtener ID de ejercicio: {err}")
+            return None
+        finally:
+            cursor.close() 

@@ -234,15 +234,11 @@ class WorkoutFrame(ttk.Frame):
                 series.append(valores)
             datos_finales[ejercicio] = series
 
-        # GUARDAR EN BASE DE DATOS
-        if hasattr(self.app, "db_conector"):
-            # Opcionalmente puedes pasar más datos como el ID del entrenamiento
-            self.app.db_conector.guardar_resultados_entrenamiento(datos_finales, self.training_data.id)
-            print("¡Cambios guardados en la base de datos!")
+        if self.db_conector and self.training_data and hasattr(self.training_data, "id"):
+            try:
+                self.db_conector.guardar_resultados_entrenamiento(datos_finales, self.training_data.id)
+                print("¡Cambios guardados en la base de datos!")
+            except Exception as e:
+                print(f"Error al guardar los cambios: {e}")
         else:
-            print("No se encontró el conector a base de datos.")
-
-        import json
-
-        print(json.dumps(datos_finales, indent=2))
-        print("-----------------------")
+            print("No se encontró el conector a base de datos o datos de entrenamiento.")
