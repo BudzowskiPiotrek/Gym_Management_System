@@ -8,3 +8,7 @@ class RoutineDay:
         self.dia = dia  # nombre del dia...dia de pierna, dia de empuje...etc
         self.grupoMusc = grupoMusc
         self.ejercicios: list[Exercise] = []  # La lista vacía
+    
+    
+    def __repr__(self):
+        return f"RoutineDay(id={self.id}, dia='{self.dia}')"

@@ -20,3 +20,6 @@ class Exercise:
         self.pesoEstimado = pesoEstimado
         self.descanso = descanso
         self.esfuerzoEstimado = esfuerzoEstimado
+
+    def __repr__(self):
+        return f"Exercise(id={self.id}, nombre='{self.nombre}')"

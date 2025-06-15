@@ -17,7 +17,7 @@ class HomeFrame(ttk.Frame):
         ttk.Button(self, text="Registrar Rutina Nueva", command=self.app.mostrar_rutina, width=40).pack(pady=15)
         
         # Botón para Registrar Entrenamiento
-        ttk.Button(self, text="Registrar Entrenamiento", command=self.app.mostrar_entrenamiento, width=40).pack(pady=15)
+        ttk.Button(self, text="Registrar Entrenamiento", command=self.app.seleccionar_entreno_rutina, width=40).pack(pady=15)
         
         # Botón para Registrar Ejercicio
         ttk.Button(self, text="Registrar Ejercicio", command=self.app.seleccionar_nuevo_dia_entrenado, width=40).pack(pady=15)
