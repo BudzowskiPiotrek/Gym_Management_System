@@ -1,5 +1,5 @@
 from Routines import Routines
-from Training import Training
+from .Training import Training
 
 
 class User:

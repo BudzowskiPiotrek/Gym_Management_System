@@ -1,6 +1,6 @@
 from datetime import date
 
-from Clases.ExerciseResult import ExerciseResult
+from .ExerciseResult import ExerciseResult
 
 
 # determina la fecha del entrenamiento, y tiene que tener una lista de resultados

@@ -1,4 +1,4 @@
-from Exercise import Exercise
+from .Exercise import Exercise
 
 
 class RoutineDay:

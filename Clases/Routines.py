@@ -1,5 +1,5 @@
 from datetime import date
-from RoutineDay import RoutineDay
+from .RoutineDay import RoutineDay
 
 
 class Routines:
