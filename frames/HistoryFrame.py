@@ -1,49 +1,45 @@
 import tkinter as tk
 from tkinter import ttk
-
+from Clases.Training import Training
+from Clases.Exercise import Exercise 
+from Clases.ExerciseResult import ExerciseResult 
 
 class HistoryFrame(ttk.Frame):
     """
-    Frame para mostrar y editar el historial de entrenamientos, agrupado por ejercicio.
+    Frame para mostrar el historial de entrenamientos, agrupado por ejercicio, sin edición.
     """
 
-    def __init__(self, parent, app):
+    # ¡CORRECCIÓN AQUÍ! El __init__ ahora acepta un parámetro training_data opcional.
+    def __init__(self, parent, app, training_data: Training = None):
         super().__init__(parent)
         self.app = app
-        self.entry_popup = None  # Para mantener una referencia al Entry de edición
+        self.training_data = training_data # Guarda el objeto Training que se ha pasado
+        
         self.place(relx=0.5, rely=0.5, anchor="center")
         
-        
-        # --- Configuración del Grid Layout para este Frame ---
-        self.grid_rowconfigure(0, weight=0)  # Fila para el título
-        self.grid_rowconfigure(1, weight=1)  # Fila para la tabla (expandible)
-        self.grid_rowconfigure(2, weight=0)  # Fila para los botones
+        self.grid_rowconfigure(0, weight=0)  
+        self.grid_rowconfigure(1, weight=1)  
+        self.grid_rowconfigure(2, weight=0)  
         self.grid_columnconfigure(0, weight=1)
         
-        # --- Título ---
         ttk.Label(
             self, text="Registro de Entrenamiento", font=("Arial", 16, "bold")
         ).grid(row=0, column=0, pady=(20, 10), padx=10)
 
-        # --- Contenedor para la Tabla y Scrollbar ---
         tree_container = ttk.Frame(self)
         tree_container.grid(row=1, column=0, sticky="nsew", padx=10, pady=5)
         tree_container.grid_rowconfigure(0, weight=1)
         tree_container.grid_columnconfigure(0, weight=1)
 
-        # --- Creación y Configuración del Treeview ---
-        # Ahora las columnas son para los datos de las series. El nombre del ejercicio va en la columna #0 del árbol.
         column_ids = ("serie", "kg", "reps", "esfuerzo")
         self.tabla = ttk.Treeview(
             tree_container, columns=column_ids, show="tree headings"
         )
         self.tabla.grid(row=0, column=0, sticky="nsew")
 
-        # Configurar la columna principal del árbol (#0) para los nombres de los ejercicios
         self.tabla.heading("#0", text="Ejercicio")
         self.tabla.column("#0", anchor=tk.W, width=100)
 
-        # Configurar las otras columnas
         self.tabla.heading("serie", text="Serie")
         self.tabla.column("serie", width=80, anchor=tk.CENTER)
         self.tabla.heading("kg", text="Peso (KG)")
@@ -53,165 +49,79 @@ class HistoryFrame(ttk.Frame):
         self.tabla.heading("esfuerzo", text="Esfuerzo (RIR)")
         self.tabla.column("esfuerzo", width=120, anchor=tk.CENTER)
 
-        # --- Scrollbar ---
         scrollbar = ttk.Scrollbar(
             tree_container, orient=tk.VERTICAL, command=self.tabla.yview
         )
         self.tabla.configure(yscrollcommand=scrollbar.set)
         scrollbar.grid(row=0, column=1, sticky="ns")
 
-        # --- Evento para editar celdas ---
-        self.tabla.bind("<Double-1>", self.on_tree_double_click)
-
-        # --- Llenar la tabla con la nueva estructura agrupada ---
-        self.llenar_tabla()
-
-        # --- Contenedor para los botones ---
         button_frame = ttk.Frame(self)
         button_frame.grid(row=2, column=0, pady=10, padx=10, sticky="ew")
-        button_frame.grid_columnconfigure(
-            (0, 1, 2, 3, 4), weight=1
-        )  # Para que los botones se espacien
+        button_frame.grid_columnconfigure(0, weight=1) 
 
-        # --- Botones ---
         ttk.Button(
             button_frame, text="Volver atrás", command=self.app.mostrar_inicio
         ).grid(row=0, column=0, padx=5, sticky="ew")
-        ttk.Button(
-            button_frame, text="Limpiar series", command=self.llenar_tabla
-        ).grid(row=0, column=1, padx=5, sticky="ew")
-        ttk.Button(
-            button_frame,
-            text="Aumentar Peso (+10%)",
-            command=lambda: self.modificar_peso(1.1),
-        ).grid(row=0, column=2, padx=5, sticky="ew")
-        ttk.Button(
-            button_frame,
-            text="Reducir Peso (-10%)",
-            command=lambda: self.modificar_peso(0.9),
-        ).grid(row=0, column=3, padx=5, sticky="ew")
-        ttk.Button(
-            button_frame, text="Guardar Cambios", command=self.guardar_cambios
-        ).grid(row=0, column=4, padx=5, sticky="ew")
+
+        # ¡CORRECCIÓN AQUÍ! Llama a cargar_entrenamiento_en_historial si se pasa el objeto Training
+        if self.training_data:
+            self.cargar_entrenamiento_en_historial(self.training_data)
+        else:
+            print("No se proporcionó ningún entrenamiento para mostrar en el historial.")
 
 
-
-    def llenar_tabla(self):
-        """Llena la tabla usando una estructura de datos anidada."""
+    def llenar_tabla(self, training_data: Training):
+        """
+        Llena la tabla con los datos del objeto Training proporcionado.
+        """
         for item in self.tabla.get_children():
             self.tabla.delete(item)
 
-        
-        ejerA="Sentadilla";a1=[80,10,2]
-        ejerB="Press Banca"
-        ejerC="Elevaciones Laterales"
-        ejerD="Remo"
-        ejerE="Domiminadas"
-        ejerF="Peso Muerto"
-        
-        
-        
-
-        datos_estructurados = {
-            ejerA: [a1, [80, 9, 2], [80, 8, 1],[80, 8, 1]],
-            ejerB: [[120, 8, 2], [120, 8, 1], [120, 7, 1],[10, 10, 1]],
-            ejerC: [[150, 5, 2],[10, 10, 1],[10, 10, 1],[10, 10, 1]],
-            ejerD: [[10, 12, 1], [10, 10, 1],[10, 10, 1],[10, 10, 1]],
-            ejerE: [[80, 10, 2], [80, 9, 2], [80, 8, 1],[80, 8, 1]],
-            ejerF: [[80, 10, 2], [80, 9, 2], [80, 8, 1],[80, 8, 1]],
+        ejercicio_nombres = {
+            # Asumiendo IDs de ejercicios de tu script SQL anterior
+            # Piernas:
+            1: "Sentadilla con barra", 2: "Prensa de piernas", 3: "Extensiones de cuádriceps",
+            4: "Curl femoral", 5: "Sentadilla búlgara", 6: "Gemelos en máquina de pie",
+            7: "Zancadas con mancuernas", 8: "Hip thrust",
+            # Empuje:
+            9: "Press de banca con barra", 10: "Press inclinado con mancuernas", 11: "Press de hombros con barra",
+            12: "Aperturas con mancuernas", 13: "Press francés", 14: "Elevaciones laterales",
+            15: "Fondos en paralelas", 16: "Extensiones de tríceps en polea alta",
+            # Tirón:
+            17: "Dominadas", 18: "Remo con barra", 19: "Jalón al pecho",
+            20: "Remo en máquina", 21: "Curl de bíceps con barra", 22: "Face pull",
+            23: "Encogimiento de hombros con mancuernas", 24: "Curl de bíceps concentrado"
         }
 
-        for ejercicio, series in datos_estructurados.items():
-            parent_id = self.tabla.insert(
-                parent="", index=tk.END, text=ejercicio, open=True
-            )
-            for i, serie_data in enumerate(series):
-                # Los valores corresponden a las 'column_ids'
-                valores_serie = [f"Serie {i+1}"] + serie_data
-                self.tabla.insert(parent=parent_id, index=tk.END, values=valores_serie)
-
-    def on_tree_double_click(self, event):
-        """Maneja el doble clic para iniciar la edición de una celda."""
-        if self.entry_popup:
-            self.entry_popup.destroy()
-
-        item_id = self.tabla.focus()
-        column_id = self.tabla.identify_column(event.x)
-
-        # Solo permitir edición en filas de series (no en ejercicios) y en columnas numéricas
-        if not self.tabla.parent(item_id) or column_id in ["#0", "#1"]:
-            return
-
-        bbox = self.tabla.bbox(item_id, column_id)
-        if not bbox:
-            return  # Si la celda no es visible
-
-        x, y, width, height = bbox
-
-        current_value = self.tabla.set(item_id, column_id)
-
-        self.entry_popup = ttk.Entry(self.tabla)
-        self.entry_popup.place(x=x, y=y, width=width, height=height)
-        self.entry_popup.insert(0, current_value)
-        self.entry_popup.focus_set()
-        self.entry_popup.select_range(0, tk.END)
-
-        self.entry_popup.bind(
-            "<Return>", lambda e: self.guardar_edicion_celda(item_id, column_id)
-        )
-        self.entry_popup.bind(
-            "<FocusOut>", lambda e: self.guardar_edicion_celda(item_id, column_id)
-        )
+        ejercicios_agrupados = {}
+        if training_data.resultado: # Asegurarse de que hay resultados
+            for resultado_ejercicio in training_data.resultado:
+                ejercicio_id = resultado_ejercicio.ejercicio_id
+                if ejercicio_id not in ejercicios_agrupados:
+                    ejercicios_agrupados[ejercicio_id] = []
+                ejercicios_agrupados[ejercicio_id].append(resultado_ejercicio)
+            
+            for ejercicio_id, resultados in ejercicios_agrupados.items():
+                ejercicio_nombre = ejercicio_nombres.get(ejercicio_id, f"Ejercicio ID: {ejercicio_id}")
+                parent_id = self.tabla.insert(
+                    parent="", index=tk.END, text=ejercicio_nombre, open=True
+                )
+                resultados.sort(key=lambda x: x.serie) 
+                for resultado_serie in resultados:
+                    valores_serie = [
+                        f"Serie {resultado_serie.serie}",
+                        resultado_serie.pesoUsado,
+                        resultado_serie.repsReales,
+                        resultado_serie.esfuerzoReal
+                    ]
+                    self.tabla.insert(parent=parent_id, index=tk.END, values=valores_serie)
+        else:
+            self.tabla.insert("", tk.END, text="No hay resultados de ejercicios para este entrenamiento.", values=("", "", "", ""))
 
 
-    def guardar_edicion_celda(self, item_id, column_id):
-        """Guarda el valor del Entry emergente en el Treeview y lo destruye."""
-        if self.entry_popup:
-            new_value = self.entry_popup.get()
-            self.tabla.set(item_id, column=column_id, value=new_value)
-            self.entry_popup.destroy()
-            self.entry_popup = None
-
-
-    def limpiar_seleccion(self):
-        """Limpia los valores numéricos de la serie seleccionada."""
-        selected_items = self.tabla.selection()
-        for item_id in selected_items:
-            if self.tabla.parent(item_id):  # Asegurarse de que es una serie
-                self.tabla.set(item_id, "kg", "")
-                self.tabla.set(item_id, "reps", "")
-                self.tabla.set(item_id, "esfuerzo", "")
-
-
-    def modificar_peso(self, incremento):
-        """Aumenta o reduce el peso de las series seleccionadas."""
-        selected_items = self.tabla.selection()
-        for item_id in selected_items:
-            if self.tabla.parent(item_id):  # Asegurarse de que es una serie
-                try:
-                    peso_actual = float(self.tabla.set(item_id, "kg"))
-                    nuevo_peso = peso_actual * incremento
-                    self.tabla.set(item_id, "kg", nuevo_peso)
-                except (ValueError, TypeError):
-                    print(
-                        f"La celda de peso para el item {item_id} no contiene un número válido."
-                    )
-
-
-    def guardar_cambios(self):
-        """Extrae todos los datos del Treeview y los muestra."""
-        print("--- GUARDANDO CAMBIOS ---")
-        datos_finales = {}
-        for parent_id in self.tabla.get_children():
-            ejercicio = self.tabla.item(parent_id, "text")
-            series = []
-            for child_id in self.tabla.get_children(parent_id):
-                # Obtenemos los valores, ignorando el primero ("Serie X")
-                valores = self.tabla.item(child_id, "values")[1:]
-                series.append(valores)
-            datos_finales[ejercicio] = series
-
-        import json
-
-        print(json.dumps(datos_finales, indent=2))
-        print("-----------------------")
+    def cargar_entrenamiento_en_historial(self, entrenamiento: Training):
+        """
+        Método público para cargar un objeto Training en la vista del historial.
+        """
+        self.llenar_tabla(entrenamiento)
+        self.grid_slaves(row=0, column=0)[0].config(text=f"Registro de Entrenamiento: {entrenamiento.dia} - {entrenamiento.fecha.strftime('%d/%m/%Y')}")

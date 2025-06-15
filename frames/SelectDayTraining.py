@@ -65,8 +65,7 @@ class SelectDayTraining(ttk.Frame):
 
         # --- Botón para Cargar ---
         # El estado inicial dependerá de si hay entrenamientos cargados
-        initial_button_state = "normal" if self.lista_entrenamientos else "disabled"
-        self.boton_cargar = ttk.Button(self, text="Cargar Entrenamiento", command=self.app.mostrar_historial , state=initial_button_state)
+        self.boton_cargar = ttk.Button(self, text="Cargar Entrenamiento", command=self.cargar_entrenamiento_seleccionado_y_mostrar_historial, state="disabled")
         self.boton_cargar.pack(pady=20)
         
         # --- Lógica de llenado y eventos ---
@@ -118,7 +117,7 @@ class SelectDayTraining(ttk.Frame):
             print("Error: Selección fuera de rango o lista vacía.")
 
 
-    def cargar_entrenamiento_seleccionado(self):
+    def cargar_entrenamiento_seleccionado_y_mostrar_historial(self):
         """
         Se ejecuta al pulsar el botón. Pasa el objeto seleccionado al controlador principal.
         """

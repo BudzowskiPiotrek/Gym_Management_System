@@ -1,4 +1,5 @@
 from tkinter import Tk
+from Clases.Training import Training 
 from frames.LoginFrame import LoginFrame
 from frames.RegisterFrame import RegisterFrame
 from frames.HomeFrame import HomeFrame
@@ -30,10 +31,13 @@ class AppMain():
         
         
     # RECIBE UNA CLASE DE FRAME PARA MOSTRAR ACTUAL Y DESASER LA ANTERIOR
-    def cambiar_frame(self, frame_clase):
+    def cambiar_frame(self, frame_clase, data=None):
         if self.frame_actual:                   # COMPRUEBA SI YA HAY ALGUN FRAME CARGADO
             self.frame_actual.destroy()         # SI ES ASI LO DESTRUYE PARA CARGAR NUEVO
-        self.frame_actual = frame_clase(self.ventana, self)
+        if data:
+            self.frame_actual = frame_clase(self.ventana, self, data)
+        else:
+            self.frame_actual = frame_clase(self.ventana, self)
     
 
     def mostrar_login(self):
@@ -65,8 +69,8 @@ class AppMain():
         self.cambiar_frame(SelectDayTraining)
 
 
-    def mostrar_historial(self):
-        self.cambiar_frame(HistoryFrame)
+    def mostrar_historial(self, entrenamiento_seleccionado: Training):
+        self.cambiar_frame(HistoryFrame, entrenamiento_seleccionado)
 
 
     def mostrar_ajustes(self):
