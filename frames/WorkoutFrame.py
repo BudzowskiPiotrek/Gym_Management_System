@@ -1,23 +1,27 @@
+from tkinter import Tk
 from tkinter import ttk, messagebox
+from Clases.Training import Training
 import mysql.connector
 import re
+import tkinter as tk # Importar tk para tk.W, tk.END, etc.
 
 class WorkoutFrame(ttk.Frame):
     # ----LA PANTALLA DE REGISTRAR ENTRENAMIENTO DIARIO----
-    
-    def __init__(self, parent, app):
+
+    def __init__(self, parent, app, training_data: Training = None):
         super().__init__(parent)
         self.app = app
+        self.training_data = training_data
         self.entry_popup = None  # Para mantener una referencia al Entry de edición
         self.place(relx=0.5, rely=0.5, anchor="center")
-        
-        
+
+
         # --- Configuración del Grid Layout para este Frame ---
         self.grid_rowconfigure(0, weight=0)  # Fila para el título
         self.grid_rowconfigure(1, weight=1)  # Fila para la tabla (expandible)
         self.grid_rowconfigure(2, weight=0)  # Fila para los botones
         self.grid_columnconfigure(0, weight=1)
-        
+
         # --- Título ---
         ttk.Label(
             self, text="Registro de Entrenamiento", font=("Arial", 16, "bold")
@@ -61,9 +65,6 @@ class WorkoutFrame(ttk.Frame):
         # --- Evento para editar celdas ---
         self.tabla.bind("<Double-1>", self.on_tree_double_click)
 
-        # --- Llenar la tabla con la nueva estructura agrupada ---
-        self.llenar_tabla()
-
         # --- Contenedor para los botones ---
         button_frame = ttk.Frame(self)
         button_frame.grid(row=2, column=0, pady=10, padx=10, sticky="ew")
@@ -76,7 +77,7 @@ class WorkoutFrame(ttk.Frame):
             button_frame, text="Volver atrás", command=self.app.mostrar_inicio
         ).grid(row=0, column=0, padx=5, sticky="ew")
         ttk.Button(
-            button_frame, text="Limpiar series", command=self.llenar_tabla
+            button_frame, text="Limpiar series", command=self.limpiar_tabla_completa # CAMBIO AQUI
         ).grid(row=0, column=1, padx=5, sticky="ew")
         ttk.Button(
             button_frame,
@@ -92,41 +93,65 @@ class WorkoutFrame(ttk.Frame):
             button_frame, text="Guardar Cambios", command=self.guardar_cambios
         ).grid(row=0, column=4, padx=5, sticky="ew")
 
+        # --- Llenar la tabla con los datos del entrenamiento si se proporcionan ---
+        if self.training_data:
+            self.cargar_entrenamiento_en_historial(self.training_data)
+        else:
+            print("No se proporcionó ningún entrenamiento para mostrar en el historial.")
 
-
-    def llenar_tabla(self):
-        """Llena la tabla usando una estructura de datos anidada."""
+    # --- Método de clase WorkoutFrame para llenar la tabla ---
+    def llenar_tabla(self, training_data: Training):
         for item in self.tabla.get_children():
             self.tabla.delete(item)
 
-        
-        ejerA="Sentadilla";a1=[80,10,2]
-        ejerB="Press Banca"
-        ejerC="Elevaciones Laterales"
-        ejerD="Remo"
-        ejerE="Domiminadas"
-        ejerF="Peso Muerto"
-        
-        
-        
-
-        datos_estructurados = {
-            ejerA: [a1, [80, 9, 2], [80, 8, 1],[80, 8, 1]],
-            ejerB: [[120, 8, 2], [120, 8, 1], [120, 7, 1],[10, 10, 1]],
-            ejerC: [[150, 5, 2],[10, 10, 1],[10, 10, 1],[10, 10, 1]],
-            ejerD: [[10, 12, 1], [10, 10, 1],[10, 10, 1],[10, 10, 1]],
-            ejerE: [[80, 10, 2], [80, 9, 2], [80, 8, 1],[80, 8, 1]],
-            ejerF: [[80, 10, 2], [80, 9, 2], [80, 8, 1],[80, 8, 1]],
+        ejercicio_nombres = {
+            1: "Sentadilla con barra", 2: "Prensa de piernas", 3: "Extensiones de cuádriceps",
+            4: "Curl femoral", 5: "Sentadilla búlgara", 6: "Gemelos en máquina de pie",
+            7: "Zancadas con mancuernas", 8: "Hip thrust",
+            # Empuje:
+            9: "Press de banca con barra", 10: "Press inclinado con mancuernas", 11: "Press de hombros con barra",
+            12: "Aperturas con mancuernas", 13: "Press francés", 14: "Elevaciones laterales",
+            15: "Fondos en paralelas", 16: "Extensiones de tríceps en polea alta",
+            # Tirón:
+            17: "Dominadas", 18: "Remo con barra", 19: "Jalón al pecho",
+            20: "Remo en máquina", 21: "Curl de bíceps con barra", 22: "Face pull",
+            23: "Encogimiento de hombros con mancuernas", 24: "Curl de bíceps concentrado"
         }
 
-        for ejercicio, series in datos_estructurados.items():
-            parent_id = self.tabla.insert(
-                parent="", index=tk.END, text=ejercicio, open=True
-            )
-            for i, serie_data in enumerate(series):
-                # Los valores corresponden a las 'column_ids'
-                valores_serie = [f"Serie {i+1}"] + serie_data
-                self.tabla.insert(parent=parent_id, index=tk.END, values=valores_serie)
+        ejercicios_agrupados = {}
+        if training_data.resultado:
+            for resultado_ejercicio in training_data.resultado:
+                ejercicio_id = resultado_ejercicio.ejercicio_id
+                if ejercicio_id not in ejercicios_agrupados:
+                    ejercicios_agrupados[ejercicio_id] = []
+                ejercicios_agrupados[ejercicio_id].append(resultado_ejercicio)
+
+            for ejercicio_id, resultados in ejercicios_agrupados.items():
+                ejercicio_nombre = ejercicio_nombres.get(ejercicio_id, f"Ejercicio ID: {ejercicio_id}")
+                parent_id = self.tabla.insert(
+                    parent="", index=tk.END, text=ejercicio_nombre, open=True
+                )
+                resultados.sort(key=lambda x: x.serie)
+                for resultado_serie in resultados:
+                    valores_serie = [
+                        f"Serie {resultado_serie.serie}",
+                        resultado_serie.pesoUsado,
+                        resultado_serie.repsReales,
+                        resultado_serie.esfuerzoReal
+                    ]
+                    self.tabla.insert(parent=parent_id, index=tk.END, values=valores_serie)
+        else:
+            self.tabla.insert("", tk.END, text="No hay resultados de ejercicios para este entrenamiento.", values=("", "", "", ""))
+
+    def limpiar_tabla_completa(self): # Nuevo método para limpiar la tabla
+        for item in self.tabla.get_children():
+            self.tabla.delete(item)
+        print("Tabla de series limpiada.")
+
+    def cargar_entrenamiento_en_historial(self, entrenamiento: Training):
+        self.llenar_tabla(entrenamiento)
+        self.grid_slaves(row=0, column=0)[0].config(text=f"Registro de Entrenamiento: {entrenamiento.dia} - {entrenamiento.fecha.strftime('%d/%m/%Y')}")
+
 
     def on_tree_double_click(self, event):
         """Maneja el doble clic para iniciar la edición de una celda."""
