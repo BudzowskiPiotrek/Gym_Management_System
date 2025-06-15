@@ -56,20 +56,16 @@ class AppMain():
         self.cambiar_frame(RoutineFrame)
 
 
-    def mostrar_entrenamiento(self):
-        self.cambiar_frame(WorkoutFrame)
-
-
-    def registar_ejercicio(self):
-        self.cambiar_frame(WorkoutFrame)
-
-
     def seleccionar_dia_entrenado(self):
         self.cambiar_frame(SelectDayTraining)
 
 
     def seleccionar_nuevo_dia_entrenado(self):
         self.cambiar_frame(SelectNewDayTraining)
+
+
+    def mostrar_entrenamiento(self, entrenamiento_seleccionado: Training):
+        self.cambiar_frame(WorkoutFrame, entrenamiento_seleccionado)
 
 
     def mostrar_historial(self, entrenamiento_seleccionado: Training):
