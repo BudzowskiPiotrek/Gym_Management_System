@@ -1,3 +1,4 @@
+from datetime import date
 import mysql.connector
 from Clases.Training import Training 
 from Clases.Exercise import Exercise 
@@ -194,5 +195,115 @@ class BDConector:
         except mysql.connector.Error as err:
             print(f"Error al cargar entrenamientos o resultados de ejercicios: {err}")
             return []
+        finally:
+            self.desconectar()
+
+
+
+    # Crea un nuevo entrenamiento en la base de datos con una fecha actual
+    # y precarga los ejercicios correspondientes al tipo de entrenamiento
+    # (Piernas, Tirón, Empuje) con valores iniciales de 0 para reps, peso y esfuerzo.
+    # Retorna el objeto Training del nuevo entrenamiento creado o None en caso de error.
+    def CrearNuevoEntrenamientoConEjerciciosPredeterminados(self, user_id: int, tipo_entrenamiento: str) -> Training | None:
+        
+        self.conectar()
+
+        if not self.conexion or not self.conexion.is_connected():
+            print("Error: No se pudo establecer conexión a la base de datos para crear un nuevo entrenamiento.")
+            return None
+
+        try:
+            cursor = self.conexion.cursor(dictionary=True)
+            grupo_muscular_map = {
+                "Piernas": "Piernas",
+                "Tirón": "Tirón",
+                "Empuje": "Empuje"
+            }
+            grupo_muscular = grupo_muscular_map.get(tipo_entrenamiento)
+
+            if not grupo_muscular:
+                print(f"Error: Tipo de entrenamiento '{tipo_entrenamiento}' no reconocido.")
+                return None
+
+            query_dia_rutina_id = """
+                SELECT id FROM dias_rutina WHERE grupo_muscular = %s LIMIT 1
+            """
+            cursor.execute(query_dia_rutina_id, (grupo_muscular,))
+            dia_rutina_row = cursor.fetchone()
+
+            if not dia_rutina_row:
+                print(f"Error: No se encontró dia_rutina_id para el grupo muscular '{grupo_muscular}'.")
+                return None
+
+            dia_rutina_id = dia_rutina_row['id']
+            print(f"Encontrado dia_rutina_id: {dia_rutina_id} para {tipo_entrenamiento}")
+
+            # 2. Insertar el nuevo entrenamiento en la tabla 'entrenamientos'
+            fecha_actual = date.today()
+            notas = f"Entrenamiento de {tipo_entrenamiento} generado automáticamente el {fecha_actual.strftime('%d/%m/%Y')}."
+
+            insert_entrenamiento_query = """
+                INSERT INTO entrenamientos (usuario_id, fecha, dia, notas)
+                VALUES (%s, %s, %s, %s)
+            """
+            # Usar el nombre del tipo de entrenamiento como 'dia' para el nuevo registro
+            cursor.execute(insert_entrenamiento_query, (user_id, fecha_actual, tipo_entrenamiento, notas))
+            self.conexion.commit()
+            nuevo_entrenamiento_id = cursor.lastrowid
+            print(f"Nuevo entrenamiento insertado con ID: {nuevo_entrenamiento_id}")
+
+            # Crear el objeto Training para el nuevo entrenamiento
+            nuevo_entrenamiento = Training(
+                id=nuevo_entrenamiento_id,
+                fecha=fecha_actual,
+                dia=tipo_entrenamiento,
+                notas=notas
+            )
+
+            # 3. Obtener los ejercicios predefinidos para este tipo de rutina
+            query_ejercicios = """
+                SELECT id, nombre, series FROM ejercicios WHERE dia_rutina_id = %s ORDER BY id ASC
+            """
+            cursor.execute(query_ejercicios, (dia_rutina_id,))
+            ejercicios_predefinidos = cursor.fetchall()
+            print(f"Ejercicios predefinidos para {tipo_entrenamiento}: {ejercicios_predefinidos}")
+
+            # 4. Insertar resultados_ejercicios para cada serie de cada ejercicio con valores iniciales de 0
+            insert_resultado_query = """
+                INSERT INTO resultados_ejercicios (entrenamiento_id, ejercicio_id, serie, repeticiones_reales, peso_usado, esfuerzo_real)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """
+            for ejercicio_row in ejercicios_predefinidos:
+                ejercicio_id = ejercicio_row['id']
+                nombre_ejercicio = ejercicio_row['nombre']
+                num_series = ejercicio_row['series']
+
+                for serie_num in range(1, num_series + 1):
+                    # Insertar con valores predeterminados de 0
+                    cursor.execute(insert_resultado_query,
+                                (nuevo_entrenamiento_id, ejercicio_id, serie_num, 0, 0.0, 0))
+                    # También añadir a la lista de resultados del objeto Training
+                    nuevo_entrenamiento.resultado.append(
+                        ExerciseResult(
+                            id=0, # ID será asignado por la BD al guardar realmente, aquí es temporal
+                            entrenamiento_id=nuevo_entrenamiento_id,
+                            ejercicio_id=ejercicio_id,
+                            serie=serie_num,
+                            repsReales=0,
+                            pesoUsado=0.0,
+                            esfuerzoReal=0
+                        )
+                    )
+            self.conexion.commit() # Confirmar todas las inserciones de resultados
+
+            cursor.close()
+            print(f"Nuevo entrenamiento con ID {nuevo_entrenamiento_id} y sus ejercicios predeterminados creados exitosamente.")
+            return nuevo_entrenamiento
+
+        except mysql.connector.Error as err:
+            print(f"Error al crear nuevo entrenamiento con ejercicios predeterminados: {err}")
+            if self.conexion and self.conexion.is_connected():
+                self.conexion.rollback() # Deshacer cambios si hay un error
+            return None
         finally:
             self.desconectar()
