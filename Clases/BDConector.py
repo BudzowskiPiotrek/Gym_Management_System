@@ -1,4 +1,9 @@
 import mysql.connector
+from Clases.Training import Training 
+from Clases.Exercise import Exercise 
+from Clases.ExerciseResult import ExerciseResult
+from Clases.RoutineDay import RoutineDay
+from Clases.Routines import Routines
 
 class BDConector:
     def __init__(self):
@@ -38,10 +43,10 @@ class BDConector:
             return None
 
         try:
-            cursor = self.conexion.cursor()
+            cursor = self.conexion.cursor(dictionary=True)
             # Consulta para verificar nombre de usuario y contraseña
             query = """
-                SELECT * FROM usuario
+                SELECT id, nombre_usuario, tipo FROM usuario
                 WHERE nombre_usuario = %s AND contraseña = %s
             """
             cursor.execute(query, (nombre_usuario, contraseña))
@@ -91,6 +96,7 @@ class BDConector:
         finally:
             self.desconectar() # Asegura que la conexión se cierre al finalizar
 
+
     # CAMBIA LA CONTRASEÑA DE UN USUARIO EXISTENTE EN LA BASE DE DATOS.
     # RETORNA:
     # - True si la contraseña se actualizó correctamente.
@@ -126,3 +132,67 @@ class BDConector:
             return False
         finally:
             self.desconectar() # Asegura que la conexión se cierre al finalizar
+
+
+    # CARGA TODOS LOS ENTRENAMIENTOS DE EL USUARIO CON SUS RESULTAODOS
+    def CargaEntrenamientos(self, usuario_id: int) -> list[Training]:
+        self.conectar()
+
+        if not self.conexion or not self.conexion.is_connected():
+            print("Error: No se pudo establecer conexión a la base de datos para cargar entrenamientos.")
+            return []
+
+        entrenamientos_cargados: list[Training] = []
+        try:
+            cursor = self.conexion.cursor(dictionary=True) 
+            # PRIMERO CREAMOS OBJETO ENTRENAMIENTO
+            query_entrenamientos = """  
+                SELECT id, usuario_id, fecha, dia, notas
+                FROM entrenamientos
+                WHERE usuario_id = %s
+                ORDER BY fecha DESC, id DESC
+            """
+            cursor.execute(query_entrenamientos, (usuario_id,))
+            resultados_entrenamientos = cursor.fetchall()
+
+            for row_entrenamiento in resultados_entrenamientos:
+                # SE CREA EL OBJETO Y SE LE RELLENA
+                entrenamiento = Training(
+                    id=row_entrenamiento['id'],
+                    fecha=row_entrenamiento['fecha'],
+                    dia=row_entrenamiento['dia'],
+                    notas=row_entrenamiento['notas']
+                )
+
+                # SEGUNDO RELLENAMOS RESUNTADOS DE EJERCICIOS DE LA RUTINA
+                query_resultados_ejercicios = """
+                    SELECT id, entrenamiento_id, ejercicio_id, serie, repeticiones_reales, peso_usado, esfuerzo_real
+                    FROM resultados_ejercicios
+                    WHERE entrenamiento_id = %s
+                    ORDER BY serie ASC
+                """
+                cursor.execute(query_resultados_ejercicios, (entrenamiento.id,))
+                resultados_ejercicios = cursor.fetchall()
+
+                for row_resultado in resultados_ejercicios:
+                    # SE CREA EL OBJETO Y SE LE RELLENA
+                    resultado_ejercicio = ExerciseResult(
+                        id=row_resultado['id'],
+                        entrenamiento_id=row_resultado['entrenamiento_id'], 
+                        ejercicio_id=row_resultado['ejercicio_id'],         
+                        serie=row_resultado['serie'],
+                        repsReales=row_resultado['repeticiones_reales'], 
+                        pesoUsado=row_resultado['peso_usado'],
+                        esfuerzoReal=row_resultado['esfuerzo_real']
+                    )
+                    entrenamiento.resultado.append(resultado_ejercicio)
+                entrenamientos_cargados.append(entrenamiento)
+
+            cursor.close()
+            return entrenamientos_cargados
+
+        except mysql.connector.Error as err:
+            print(f"Error al cargar entrenamientos o resultados de ejercicios: {err}")
+            return []
+        finally:
+            self.desconectar()
