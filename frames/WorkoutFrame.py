@@ -80,9 +80,6 @@ class WorkoutFrame(ttk.Frame):
             button_frame, text="Volver atrás", command=self.app.mostrar_inicio
         ).grid(row=0, column=0, padx=5, sticky="ew")
         ttk.Button(
-            button_frame, text="Limpiar series", command=self.limpiar_tabla_completa # CAMBIO AQUI
-        ).grid(row=0, column=1, padx=5, sticky="ew")
-        ttk.Button(
             button_frame,
             text="Aumentar Peso (+10%)",
             command=lambda: self.modificar_peso(1.1),
@@ -146,10 +143,6 @@ class WorkoutFrame(ttk.Frame):
         else:
             self.tabla.insert("", tk.END, text="No hay resultados de ejercicios para este entrenamiento.", values=("", "", "", ""))
 
-    def limpiar_tabla_completa(self): # Nuevo método para limpiar la tabla
-        for item in self.tabla.get_children():
-            self.tabla.delete(item)
-        print("Tabla de series limpiada.")
 
     def cargar_entrenamiento_en_historial(self, entrenamiento: Training):
         self.llenar_tabla(entrenamiento)

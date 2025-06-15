@@ -1,6 +1,5 @@
 from .Exercise import Exercise
 
-
 class RoutineDay:
 
     def __init__(self, id: int, dia: str, grupoMusc: str):
