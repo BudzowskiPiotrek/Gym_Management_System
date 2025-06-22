@@ -1,6 +1,6 @@
 # 💪🏋️‍♀️ Aplicación de Gimnasio con Interfaz Gráfica y SQL 📊
 
-## ¡Tu Compañero Definitivo para el Entrenamiento Personal! 🚀✨
+## ¡Tu Compañero Definitivo para el Entrenamiento Personal! 🚀✨ 
 
 Este repositorio presenta una aplicación de gimnasio desarrollada en Python con una interfaz gráfica intuitiva, diseñada para ayudar a los usuarios a gestionar sus rutinas de ejercicio y registrar resultados. Se conecta a una base de datos SQL para almacenar de forma persistente todas las rutinas, ejercicios y el progreso de los usuarios. Es una solución completa para el seguimiento detallado del rendimiento físico, ideal para quienes buscan mantener un control preciso de su entrenamiento.
 
